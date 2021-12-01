@@ -9,8 +9,7 @@
 
     }
     #jobs{
-        width: 90%;
-        
+          
         height: 45%;
         border-style: solid;
         
@@ -18,11 +17,9 @@
         overflow:auto;
         width: 100%;
         display: grid;
-        grid-column-gap: 5%;
+        grid-column-gap: 2%;
          grid-template-columns: auto auto auto auto;
-       // grid-template-columns: 45% 45%;
         background-color: white;
-     //   padding: 8px;
         font-size: 18px;
         font-weight: bold;
 
@@ -34,21 +31,20 @@
 .cjob{
     border-style:solid;
     border-width: .1px;
-    
-    margin:10px;
-    width:20%;
+     margin:10px;
+    width:45%;
     display: grid;
         grid-column-gap: 30px;
          grid-template-columns: auto;
-       // grid-template-columns: 80%;
         background-color:white;
         padding: 10px;
-}
+  }
 .bj{
-    background:rgb(255, 71, 71);
-    color:white;
+    background:rgb(12, 197, 6);
+    color:rgb(202, 183, 183);
     font-weight: bold;
-    -webkit-text-stroke-width: .1px;
+    font-size: 25px;
+    -webkit-text-stroke-width: .75px;
   -webkit-text-stroke-color: black;
 
 }
@@ -60,6 +56,17 @@
     padding:10px;
 
 }
+.cop{
+    color:white;
+    margin:5px;
+    background-color: blueviolet;
+}
+#copiar{
+    width: 80%;
+    margin-left: 10%;
+    background-color: orangered;
+    border-radius: 5px;
+}
 </style>
 <div id="todo">
 <div id="jobs">
@@ -68,19 +75,11 @@
 <div id="actions">
 
 </div>
-<br><br><button onclick='clip.select();document.execCommand("copy");'>Copy</button><br>
+<br><br><button id="copiar" onclick='clip.select();document.execCommand("copy");'>Copy</button><br>
 <textarea id="clip"></textarea>
 
 
 </div>
-
-
-
-
-
-
-
-
 
 <script>
     var pa=[];
@@ -120,14 +119,28 @@ if(arj.indexOf(pa[i].job)===-1) arj.push(pa[i].job)
 }
 
 function crjob(o){
+    var s=document.createElement("select");
+    s.name=o;
+    s.setAttribute("oninput","updateStatus(this.name,this.value)")
+    s.setAttribute("class","cop");
+    var opc="<option>Active</option>"+
+        "<option>Closing</option>"+
+        "<option>Done</option>"+
+        "<option>Deactivate</option>";
+        s.innerHTML=opc;
+
+
+
 var d=document.createElement("div");
  d.setAttribute("class","cjob");
  d.name=o;
  var b=document.createElement('button');
+ b.name=o;
  b.setAttribute('class',"bj")
  b.innerHTML=o;
  b.setAttribute("onclick","sel(this.innerHTML)");
  d.appendChild(b);
+ d.appendChild(s)
  
  return d;
 
@@ -135,7 +148,7 @@ var d=document.createElement("div");
 
 }
 function sel(se){
-var arsel=[]
+var arsel=[];
 for(var i=0;i<pa.length;i++){
 if(pa[i].job===se){
     arsel.push(pa[i])
@@ -161,6 +174,33 @@ function getFe(fr){
          return {fecha:fe,tiempo:t};
 
 
+}
+function updateStatus(job, op){
+ var bts=document.getElementsByClassName("bj")
+ for(var i=0;i<bts.length;i++){
+      if(bts[i].name===job){
+          if(op==="Active"){
+              bts[i].style.background="rgb(12, 197, 6)";
+              bts[i].style.opacity=1;  
+          }
+          if(op==="Done"){
+            bts[i].style.opacity=1;  
+            bts[i].style.background="blue";    
+          }
+          if(op==="Closing"){
+            bts[i].style.opacity=1;  
+            bts[i].style.background="red";      
+            }
+            if(op==="Deactivate"){
+                bts[i].style.opacity=.25;   
+            }
+            if(op===""){
+              
+            }
+     return;
+      }
+
+ }
 }
 
 
