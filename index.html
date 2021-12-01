@@ -1,0 +1,208 @@
+<html>
+<head></head>
+
+<style>
+    #todo{
+
+
+    }
+    #jobs{
+        width: 90%;
+        
+        height: 45%;
+        border-style: solid;
+        
+        background-color: white;
+        overflow:auto;
+        width: 100%;
+        display: grid;
+        grid-column-gap: 5%;
+         grid-template-columns: auto auto auto auto;
+       // grid-template-columns: 45% 45%;
+        background-color: white;
+     //   padding: 8px;
+        font-size: 18px;
+        font-weight: bold;
+
+    }
+.cj{
+    margin:10px;
+
+}
+.cjob{
+    border-style:solid;
+    border-width: .1px;
+    
+    margin:10px;
+    width:20%;
+    display: grid;
+        grid-column-gap: 30px;
+         grid-template-columns: auto;
+       // grid-template-columns: 80%;
+        background-color:white;
+        padding: 10px;
+}
+.bj{
+    background:rgb(255, 71, 71);
+    color:white;
+    font-weight: bold;
+    -webkit-text-stroke-width: .1px;
+  -webkit-text-stroke-color: black;
+
+}
+#clip{
+    margin-top:10px;
+    width:100%;
+    height:45%;
+ 
+    padding:10px;
+
+}
+</style>
+<div id="todo">
+<div id="jobs">
+
+</div>
+<div id="actions">
+
+</div>
+<br><br><button onclick='clip.select();document.execCommand("copy");'>Copy</button><br>
+<textarea id="clip"></textarea>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+    var pa=[];
+    var linkme = 'https://jsonblob.com/api/893891925422391296'; //my clipboard
+  //   var linkme = 'https://jsonblob.com/api/915289952775061504'; //my clipboard
+ 
+var user=localStorage.getItem("us");
+
+if(user===null){
+    var u=prompt("Type your name").trim();
+    if(u==="" )window.location.reload();
+    else{ localStorage.setItem("us",u);window.location.reload();}
+
+    
+
+}
+else{
+
+
+GetJ(linkme,function(ob){
+
+    pa=ob.parts;
+ //   alert(JSON.stringify(ob))\
+ var arj=[]
+    for(var i=0;i<pa.length;i++){
+
+if(arj.indexOf(pa[i].job)===-1) arj.push(pa[i].job)
+
+    }
+    for(var i=0;i<arj.length;i++){
+
+       jobs.appendChild(crjob(arj[i])) 
+    }
+//alert(pa.length)
+
+})
+}
+
+function crjob(o){
+var d=document.createElement("div");
+ d.setAttribute("class","cjob");
+ d.name=o;
+ var b=document.createElement('button');
+ b.setAttribute('class',"bj")
+ b.innerHTML=o;
+ b.setAttribute("onclick","sel(this.innerHTML)");
+ d.appendChild(b);
+ 
+ return d;
+
+
+
+}
+function sel(se){
+var arsel=[]
+for(var i=0;i<pa.length;i++){
+if(pa[i].job===se){
+    arsel.push(pa[i])
+}
+}
+var e = String.fromCharCode(9);
+var c="QTY"+e + "Job No." + e +"P/N" + e + "Description" + e + "Mechanic" + e +"Date" +e + "Time" + e + "Move" + e + "Remaining"+ e + "Note"+"\n";
+for(var i=0;i<arsel.length;i++){
+    var p=arsel[i];
+    var f=getFe(p.created);
+    c+= p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e+f.fecha +e + f.tiempo + e + p.move + e + p.qtyObs+e + p.note+"\n";//f.fecha
+
+}
+clip.value=c;
+
+}
+function getFe(fr){
+             var f=new Date()
+           var v=Date.parse(fr);
+           f.setTime(v);
+           var fe=f.getMonth()+"-"+f.getDate()+"-"+f.getFullYear();
+           var t=f.getHours()+":"+f.getMinutes();
+         return {fecha:fe,tiempo:t};
+
+
+}
+
+
+function GetJ(url, callback) {
+
+//var url  = "http://localhost:8080/api/v1/users";
+var xhr = new XMLHttpRequest()
+xhr.open('GET', url + '/1', true)
+xhr.onload = function() {
+    //         (xhr.responseText)
+    var users = JSON.parse(xhr.responseText);
+    //     var obb=decoding(users.prim);
+
+    if (xhr.readyState == 4 && xhr.status == "200") {
+        callback(users);
+    } else {
+        console.error(users);
+    }
+}
+xhr.send(null);
+}
+
+// Update a user
+function UpdateJ(url, ob, callback) {
+//   var o={};
+//   o.prim=encoding(ob);
+// alert(obj.pulls);
+json = JSON.stringify(ob);
+var xhr = new XMLHttpRequest();
+xhr.open("PUT", url + '/12', true);
+xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+xhr.onload = function() {
+    var users = JSON.parse(xhr.responseText);
+    if (xhr.readyState == 4 && xhr.status == "200") {
+        //  alert("Tu Forma ha sido Enviada");
+        if (callback != undefined) callback(users);
+    } else {
+        (users);
+    }
+}
+xhr.send(json);
+}
+
+
+</script>
+
+</html>
