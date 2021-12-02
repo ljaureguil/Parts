@@ -73,7 +73,22 @@
     background-color: orangered;
     border-radius: 5px;
 }
-
+#des{
+    text-align: center;
+    position: absolute;
+     left:20%;
+     top:30%;
+    width:60%;
+    height:45%;
+    background:red;
+    display: none;
+}
+#tdes{
+    color:black;
+    width: 100%;
+    height: 80%;
+    padding:10px;
+}
 </style>
 <div id="todo">
 <div id="jobs">
@@ -83,33 +98,40 @@
 
 </div>
 <br><br><button id="copiar" onclick='clip.select();document.execCommand("copy");'>Copy</button><br>
-<textarea id="clip"></textarea>
+<textarea placeholder="No description yet..." id="clip">No description yet...</textarea>
 
+<div id="des">
+<textarea id="tdes"></textarea>
 
+<button onclick="des.style.display='none'">Close</button>
+<button onclick="UpdateDes()">Update</button>
+</div>
 </div>
 
 <script>
     var pa=[];
+    linkmo="https://jsonblob.com/api/916038127869771776"
     linkj="https://jsonblob.com/api/915690066303795200"
     var linkme = 'https://jsonblob.com/api/893891925422391296'; //my clipboard
   //   var linkme = 'https://jsonblob.com/api/915289952775061504'; //my clipboard
- 
+     
 var user=localStorage.getItem("us");
 
 if(user===null){
     var u=prompt("Type your name").trim();
     if(u==="" )window.location.reload();
     else{ localStorage.setItem("us",u);window.location.reload();}
-
-    
-
 }
 else{
 
 GetJ(linkj,function(obj){
 GetJ(linkme,function(ob){
-
-    pa=ob.parts;
+    GetJ(linkmo,function(obm){
+        var fe=getFe(new Date().toString());
+        obm.partsM.push(user+"_"+fe.fecha+"_"+fe.tiempo);
+        UpdateJ(linkmo,obm);
+    });
+   pa=ob.parts;
  //   alert(JSON.stringify(ob))\
  var arj=[],ars=[]
     for(var i=0;i<pa.length;i++){
@@ -155,8 +177,10 @@ function crjob(oc){
     var opc="<option>Active</option>"+
         "<option>Closing</option>"+
         "<option>Done</option>"+
-        "<option>Deactivate</option>";+
-        "<option>Job Description</option>";
+        "<option>Deactivate</option>"+
+        "<option>Job Description</option>"+
+        "<option>Moves</option>";     
+      
         s.innerHTML=opc;
    s.value=oc.status;
 var op=s.value;
@@ -242,7 +266,20 @@ function updateStatus(se){
      
   var bts=document.getElementsByClassName("bj");
 var par=se.parentElement;
-var bo=par.getElementsByTagName("button")[0];
+var by=false;
+if(op==="Job Description"){
+    by=true;
+
+                des.name=se.name;
+                tdes.value=job.description;
+                des.style.display="block";
+        }
+            if(op==="Moves"){
+                by=true;
+              if(job.moves!=undefined || job.moves!=null) alert(job.moves);
+              else {alert("no moves yet");}
+            }
+  var bo=par.getElementsByTagName("button")[0];
 if(op==="Active"){
               bo.style.background="rgb(12, 197, 6)";
               par.style.opacity=1;  
@@ -259,26 +296,48 @@ if(op==="Active"){
                  bo.style.background="yellow"; 
                par.style.opacity=.25;   
             }
-            if(op==="Job Description"){
-              if(job.description!=undefined || job.description!=null) alert(job.description)
-            }
-            if(op==="Moves"){
-              if(job.moves!=undefined || job.moves!=null) alert(job.moves)
-            }
+            if(!by){
             GetJ(linkj,function(obj){
                 var po=obj.jobs;
-                  for(var i=0;i<po.length;i++){
+                   for(var i=0;i<po.length;i++){
                     if(po[i].job.indexOf(job.job)>-1){
-                        obj.jobs[i].status=op;}
+                        obj.jobs[i].status=op;
+                        if(obj.jobs[i].moves!=undefined || obj.jobs[i].moves!=null) obj.jobs[i].moves+=op+"_";
+                else obj.jobs[i].moves=op+"_";
+                i=po.length;
+              
+                        }
                 }
-             UpdateJ(linkj,obj,function(){alert("Status Changed...");return;})
-            })
-   
-     
-//if(f) return;
- }
+             UpdateJ(linkj,obj,function(){
+                 alert("Status Changed...");
+                 window.location.reload();})
+            });
+            
+            }
+            else se.value=job.status;
+   }
 
+function UpdateDes(){
+    var job=JSON.parse(des.name);////////////////////////
+     GetJ(linkj,function(obj){ 
+        var po=obj.jobs;
+                   for(var i=0;i<po.length;i++){
+                    if(po[i].job.indexOf(job.job)>-1){
+  
+                obj.jobs[i].description=tdes.value;
+                i=po.length;
+              
+                        }
 
+                   }
+    UpdateJ(linkj,obj,function(){
+                 alert("Description updated...");
+                 window.location.reload();})
+            });
+
+      
+
+}
 
 function GetJ(url, callback) {
 
