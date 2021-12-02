@@ -73,6 +73,7 @@
     background-color: orangered;
     border-radius: 5px;
 }
+
 </style>
 <div id="todo">
 <div id="jobs">
@@ -146,14 +147,16 @@ if(arj.indexOf(pa[i].job)===-1){ arj.push(pa[i].job);}
 function crjob(oc){
     var o=oc.job;
     var s=document.createElement("select");
-    s.name=o;
+  //  s.name=oc;//JSON.stringify(oc);
+   
  
-    s.setAttribute("oninput","updateStatus(this.name,this.value)")
+    s.setAttribute("oninput","updateStatus(this)")
     s.setAttribute("class","cop");
     var opc="<option>Active</option>"+
         "<option>Closing</option>"+
         "<option>Done</option>"+
-        "<option>Deactivate</option>";
+        "<option>Deactivate</option>";+
+        "<option>Job Description</option>";
         s.innerHTML=opc;
    s.value=oc.status;
 var op=s.value;
@@ -177,28 +180,26 @@ var d=document.createElement("div");
 
  if(op==="Active"){
               b.style.background="rgb(12, 197, 6)";
-              b.style.opacity=1;  
+              b.parentElement.style.opacity=1;  
           }
           if(op==="Done"){
-            b.style.opacity=1;  
+            b.parentElement.style.opacity=1;  
             b.style.background="orange";    
           }
           if(op==="Closing"){
-            b.style.opacity=1;  
+            b.parentElement.style.opacity=1;  
             b.style.background="red";      
             }
             if(op==="Deactivate"){
                  b.style.background="yellow"; 
-                b.style.opacity=.25;   
+                b.parentElement.style.opacity=.25;   
             }
             if(op===""){
               
             }
  
-
- 
-
- return d;
+            s.setAttribute("name",JSON.stringify(oc))
+    return d;
 
 
 
@@ -235,49 +236,48 @@ function getFe(fr){
 
 
 }
-function updateStatus(job, op){
-     var f=false;
- var bts=document.getElementsByClassName("bj")
- for(var i=0;i<bts.length;i++){
-      if(bts[i].name===job){
-          f=true;
-          if(op==="Active"){
-              bts[i].style.background="rgb(12, 197, 6)";
-              bts[i].style.opacity=1;  
+function updateStatus(se){
+    var job=JSON.parse(se.name);
+     var op=se.value;
+     
+  var bts=document.getElementsByClassName("bj");
+var par=se.parentElement;
+var bo=par.getElementsByTagName("button")[0];
+if(op==="Active"){
+              bo.style.background="rgb(12, 197, 6)";
+              par.style.opacity=1;  
           }
           if(op==="Done"){
-            bts[i].style.opacity=1;  
-            bts[i].style.background="orange";    
+            par.style.opacity=1;  
+            bo.style.background="orange";    
           }
           if(op==="Closing"){
-            bts[i].style.opacity=1;  
-            bts[i].style.background="red";      
+            par.style.opacity=1;  
+            bo.style.background="red";      
             }
             if(op==="Deactivate"){
-                 bts[i].style.background="yellow"; 
-                bts[i].style.opacity=.25;   
+                 bo.style.background="yellow"; 
+               par.style.opacity=.25;   
             }
-            if(op===""){
-              
+            if(op==="Job Description"){
+              if(job.description!=undefined || job.description!=null) alert(job.description)
             }
-           
+            if(op==="Moves"){
+              if(job.moves!=undefined || job.moves!=null) alert(job.moves)
+            }
             GetJ(linkj,function(obj){
                 var po=obj.jobs;
-             
-                for(var i=0;i<po.length;i++){
-                    if(po[i].job.indexOf(job)>-1){
-                       obj.jobs[i].status=op;}
-                  
+                  for(var i=0;i<po.length;i++){
+                    if(po[i].job.indexOf(job.job)>-1){
+                        obj.jobs[i].status=op;}
                 }
-            // alert(JSON.stringify(obj))
              UpdateJ(linkj,obj,function(){alert("Status Changed...");return;})
-  
             })
    
-      }
-if(f) return;
+     
+//if(f) return;
  }
-}
+
 
 
 function GetJ(url, callback) {
