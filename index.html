@@ -31,13 +31,19 @@
 .cjob{
     border-style:solid;
     border-width: .1px;
+    border-radius: 5px;
      margin:10px;
     width:45%;
     display: grid;
         grid-column-gap: 30px;
          grid-template-columns: auto;
         background-color:white;
+  
+         background:url(https://media.istockphoto.com/photos/old-rustic-metal-plates-with-rivets-seamless-background-or-texture-picture-id685235810);
+   
+        background-size: 100% 100%;
         padding: 10px;
+        box-shadow: -5px 5px 10px 1px rgba(0,0,0,.35);
   }
 .bj{
     background:rgb(12, 197, 6);
@@ -83,6 +89,7 @@
 
 <script>
     var pa=[];
+    linkj="https://jsonblob.com/api/915690066303795200"
     var linkme = 'https://jsonblob.com/api/893891925422391296'; //my clipboard
   //   var linkme = 'https://jsonblob.com/api/915289952775061504'; //my clipboard
  
@@ -98,29 +105,49 @@ if(user===null){
 }
 else{
 
-
+GetJ(linkj,function(obj){
 GetJ(linkme,function(ob){
 
     pa=ob.parts;
  //   alert(JSON.stringify(ob))\
- var arj=[]
+ var arj=[],ars=[]
     for(var i=0;i<pa.length;i++){
 
-if(arj.indexOf(pa[i].job)===-1) arj.push(pa[i].job)
+if(arj.indexOf(pa[i].job)===-1){ arj.push(pa[i].job);}
 
     }
+  var so=JSON.stringify(obj);
     for(var i=0;i<arj.length;i++){
+         
+        if(so.indexOf(arj[i])===-1){
 
-       jobs.appendChild(crjob(arj[i])) 
+       obj.jobs.push({job:arj[i],status:"Active"});
+          } 
+  
+      
     }
-//alert(pa.length)
+    for(var i=0;i<obj.jobs.length;i++){
+        var c=crjob(obj.jobs[i])
+     jobs.appendChild(c);
+     //updateStatus(o, oc.status)
 
+
+    }  
+ 
+   // obj.jobs=obj.jobs.concat(ac);
+   UpdateJ(linkj,obj,function(){})
+
+//alert(pa.length)
 })
+})
+
 }
 
-function crjob(o){
+function crjob(oc){
+    var o=oc.job;
     var s=document.createElement("select");
     s.name=o;
+ 
     s.setAttribute("oninput","updateStatus(this.name,this.value)")
     s.setAttribute("class","cop");
     var opc="<option>Active</option>"+
@@ -128,6 +155,12 @@ function crjob(o){
         "<option>Done</option>"+
         "<option>Deactivate</option>";
         s.innerHTML=opc;
+   s.value=oc.status;
+var op=s.value;
+ 
+
+
+
 
 
 
@@ -141,7 +174,30 @@ var d=document.createElement("div");
  b.setAttribute("onclick","sel(this.innerHTML)");
  d.appendChild(b);
  d.appendChild(s)
+
+ if(op==="Active"){
+              b.style.background="rgb(12, 197, 6)";
+              b.style.opacity=1;  
+          }
+          if(op==="Done"){
+            b.style.opacity=1;  
+            b.style.background="orange";    
+          }
+          if(op==="Closing"){
+            b.style.opacity=1;  
+            b.style.background="red";      
+            }
+            if(op==="Deactivate"){
+                 b.style.background="yellow"; 
+                b.style.opacity=.25;   
+            }
+            if(op===""){
+              
+            }
  
+
+ 
+
  return d;
 
 
@@ -155,14 +211,18 @@ if(pa[i].job===se){
 }
 }
 var e = String.fromCharCode(9);
-var c="QTY"+e + "Job No." + e +"P/N" + e + "Description" + e + "Mechanic" + e +"Date" +e + "Time" + e + "Move" + e + "Remaining"+ e + "Note"+"\n";
+var ot="",mi="";
+var c="QTY"+e + "Job No." + e +"P/N" + e + "Description" + e + "Mechanic" + e +"Date" +e + "Time" + e + "Move" + e + "Remaining"+ e + "Note"+ e + "From"+"\n";
 for(var i=0;i<arsel.length;i++){
     var p=arsel[i];
     var f=getFe(p.created);
-    c+= p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e+f.fecha +e + f.tiempo + e + p.move + e + p.qtyObs+e + p.note+"\n";//f.fecha
+   if(p.clase==="inv") c+= p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e+f.fecha +e + f.tiempo + e + p.move + e + p.qtyObs+e + p.note+e+p.clase+"\n";//f.fecha
+    else{
+        if(p.clase==="other")  ot+= p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e+f.fecha +e + f.tiempo + e + p.move + e + p.qtyObs+e + p.note+e+p.clase+"\n";
+        else   mi+= p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e+f.fecha +e + f.tiempo + e + p.move + e + p.qtyObs+e + p.note+e+p.clase+"\n";
 
-}
-clip.value=c;
+}}
+clip.value=c+"\n"+mi+"\n"+ot;
 
 }
 function getFe(fr){
@@ -176,30 +236,46 @@ function getFe(fr){
 
 }
 function updateStatus(job, op){
+     var f=false;
  var bts=document.getElementsByClassName("bj")
  for(var i=0;i<bts.length;i++){
       if(bts[i].name===job){
+          f=true;
           if(op==="Active"){
               bts[i].style.background="rgb(12, 197, 6)";
               bts[i].style.opacity=1;  
           }
           if(op==="Done"){
             bts[i].style.opacity=1;  
-            bts[i].style.background="blue";    
+            bts[i].style.background="orange";    
           }
           if(op==="Closing"){
             bts[i].style.opacity=1;  
             bts[i].style.background="red";      
             }
             if(op==="Deactivate"){
+                 bts[i].style.background="yellow"; 
                 bts[i].style.opacity=.25;   
             }
             if(op===""){
               
             }
-     return;
+           
+            GetJ(linkj,function(obj){
+                var po=obj.jobs;
+             
+                for(var i=0;i<po.length;i++){
+                    if(po[i].job.indexOf(job)>-1){
+                       obj.jobs[i].status=op;}
+                  
+                }
+            // alert(JSON.stringify(obj))
+             UpdateJ(linkj,obj,function(){alert("Status Changed...");return;})
+  
+            })
+   
       }
-
+if(f) return;
  }
 }
 
