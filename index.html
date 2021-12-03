@@ -95,6 +95,17 @@
     color:white;
     font-weight: bold;
 }
+#upinv{
+    position: absolute;
+    top:1%;
+    right: 1%;
+    width: 35px;
+    height: 35px;
+    background: rgb(42, 106, 179);
+    border-radius: 100px;
+    box-shadow: -5px 5px 15px 1px rgb(10, 4, 42, 0.51), inset -5px 5px 10px 1px rgb(86, 122, 223)  , inset 5px -5px 10px 1px rgb(7, 34, 124);
+
+}
 </style>
 <div id="todo">
 <div id="jobs">
@@ -111,8 +122,9 @@
 <textarea  placeholder="No description yet..." id="tdes"></textarea>
 <br><br>
 <button onclick="des.style.display='none'">Close</button>
-<button onclick="UpdateDes()">Update</button><br><p></p>
+<button id="bup"  onclick="UpdateDes()">Update</button><br><p></p>
 </div>
+<button id="upinv" onclick="updateInv()"></button>
 </div>
 
 <script>
@@ -310,8 +322,9 @@ if(op==="Active"){
                    for(var i=0;i<po.length;i++){
                     if(po[i].job.indexOf(job.job)>-1){
                         obj.jobs[i].status=op;
-                        if(obj.jobs[i].moves!=undefined || obj.jobs[i].moves!=null) obj.jobs[i].moves+="("+user+"_"+op+")_";
-                else obj.jobs[i].moves="("+user+"_"+op+")_";
+                        var f=getFe(new Date().toString())
+                        if(obj.jobs[i].moves!=undefined || obj.jobs[i].moves!=null) obj.jobs[i].moves="("+user+"_"+op+"_"+f.fecha+"_"+f.tiempo+")_"+ obj.jobs[i].moves;
+                else obj.jobs[i].moves="("+user+"_"+op+"_"+f.fecha+"_"+f.tiempo+")_";
                 i=po.length;
               
                         }
@@ -325,7 +338,9 @@ if(op==="Active"){
             else se.value=job.status;
    }
 
-function UpdateDes(){
+function UpdateDes(inv){
+    if(bup.value!='inv'){
+        bup.innerHTML="Update"
     var job=JSON.parse(des.name);////////////////////////
      GetJ(linkj,function(obj){ 
         var po=obj.jobs;
@@ -343,8 +358,28 @@ function UpdateDes(){
                  window.location.reload();})
             });
 
-      
+        }
+        else{
+     
+        UpdateJ('https://jsonblob.com/api/916381421703282688',{inv:tdes.value},function(){
+            alert("Inv. submited.");
+            bup.innerHTML="Update";
+            des.style.display="none";
+            bup.value="";
+            
+            })
 
+        }
+
+}
+function updateInv(){
+    bup.innerHTML="Update";
+           titulo.innerHTML="Paste Inventory...";
+            bup.innerHTML="Submit To Process";
+            des.style.display="block";
+            bup.value="inv"
+
+    
 }
 
 function GetJ(url, callback) {
