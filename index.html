@@ -74,20 +74,26 @@
     border-radius: 5px;
 }
 #des{
+      font-weight: bold;
+    color:white;
     text-align: center;
     position: absolute;
      left:20%;
      top:30%;
     width:60%;
-    height:45%;
+    height:48%;
     background:red;
     display: none;
 }
 #tdes{
     color:black;
     width: 100%;
-    height: 80%;
+    height: 72%;
     padding:10px;
+}
+#copiar{
+    color:white;
+    font-weight: bold;
 }
 </style>
 <div id="todo">
@@ -98,13 +104,14 @@
 
 </div>
 <br><br><button id="copiar" onclick='clip.select();document.execCommand("copy");'>Copy</button><br>
-<textarea placeholder="No description yet..." id="clip">No description yet...</textarea>
+<textarea id="clip"></textarea>
 
 <div id="des">
-<textarea id="tdes"></textarea>
-
+    <p id="titulo"></p>
+<textarea  placeholder="No description yet..." id="tdes"></textarea>
+<br><br>
 <button onclick="des.style.display='none'">Close</button>
-<button onclick="UpdateDes()">Update</button>
+<button onclick="UpdateDes()">Update</button><br><p></p>
 </div>
 </div>
 
@@ -269,10 +276,11 @@ var par=se.parentElement;
 var by=false;
 if(op==="Job Description"){
     by=true;
-
-                des.name=se.name;
-                tdes.value=job.description;
+                  des.name=se.name;
+               if(job.description==undefined)tdes.value=""; 
+               else tdes.value=job.description;
                 des.style.display="block";
+                titulo.innerHTML="JOB NUMBER: "+job.job;
         }
             if(op==="Moves"){
                 by=true;
