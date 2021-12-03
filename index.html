@@ -310,8 +310,8 @@ if(op==="Active"){
                    for(var i=0;i<po.length;i++){
                     if(po[i].job.indexOf(job.job)>-1){
                         obj.jobs[i].status=op;
-                        if(obj.jobs[i].moves!=undefined || obj.jobs[i].moves!=null) obj.jobs[i].moves+=op+"_";
-                else obj.jobs[i].moves=op+"_";
+                        if(obj.jobs[i].moves!=undefined || obj.jobs[i].moves!=null) obj.jobs[i].moves+="("+user+"_"+op+")_";
+                else obj.jobs[i].moves="("+user+"_"+op+")_";
                 i=po.length;
               
                         }
