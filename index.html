@@ -337,7 +337,7 @@
             GetJ(linkj, function(obj) {
                 var po = obj.jobs;
                 for (var i = 0; i < po.length; i++) {
-                    if (po[i].job.indexOf(job.job) > -1) {
+                    if (po[i].job===job.job) {
                         obj.jobs[i].status = op;
                         var f = getFe(new Date().toString())
                         if (obj.jobs[i].moves != undefined || obj.jobs[i].moves != null) obj.jobs[i].moves = "(" + user + "_" + op + "_" + f.fecha + "_" + f.tiempo + ")_" + obj.jobs[i].moves;
