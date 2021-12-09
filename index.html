@@ -37,7 +37,7 @@
         box-shadow: -5px 5px 10px 1px rgba(0, 0, 0, .35);
     }
     .bj {
-        background: rgb(12, 197, 6);
+        background: rgb(68, 250, 62);
         color: rgb(202, 183, 183);
         font-weight: bold;
         font-size: 25px;
@@ -121,7 +121,7 @@
         <br>
         <div id="bb">
             <button onclick="des.style.display='none'" class="cbb">Close</button>
-            <button id="bupi" onclick="updateInv()" class="cbb">Submit To Process</button>
+            <button id="bupi" onclick="updateInv()" class="cbb">Send Message</button>
             <button id="bup" onclick="UpdateDes()" class="cbb">Update</button>
         </div>
         <br>
@@ -133,11 +133,11 @@
 
 <script>
     var pa = [];
-    linkmo = "https://jsonblob.com/api/916038127869771776"
-    linkj = "https://jsonblob.com/api/915690066303795200"
+    linkmo = "https://jsonblob.com/api/916038127869771776"//openings
+    linkj = "https://jsonblob.com/api/915690066303795200"//jobs
     var linkme = 'https://jsonblob.com/api/893891925422391296'; //my clipboard
-    //   var linkme = 'https://jsonblob.com/api/915289952775061504'; //my clipboard
-
+       var linkx = 'https://jsonblob.com/api/915289952775061504'; //test
+var linktr='https://jsonblob.com/api/917804065594032128'//trash
     var user = localStorage.getItem("us");
 
     if (user === null) {
@@ -170,11 +170,12 @@
                 var so = JSON.stringify(obj);
                 for (var i = 0; i < arj.length; i++) {
 
-                    if (so.indexOf(arj[i]) === -1) {
+                    if (so.indexOf('"'+arj[i]+'"') === -1) {
 
                         obj.jobs.push({
                             job: arj[i],
-                            status: "Active"
+                            status: "Active",
+                            moves:""
                         });
                     }
 
@@ -210,7 +211,9 @@
             "<option>Done</option>" +
             "<option>Deactivate</option>" +
             "<option>Job Description</option>" +
-            "<option>Moves</option>";
+            "<option>Moves</option>"+
+            "<option>Rename</option>"+
+             "<option>DELETE</option>";
 
         s.innerHTML = opc;
         s.value = oc.status;
@@ -227,7 +230,7 @@
         d.appendChild(s)
 
         if (op === "Active") {
-            b.style.background = "rgb(12, 197, 6)";
+            b.style.background = "rgb(68, 250, 62)";
             b.parentElement.style.opacity = 1;
         }
         if (op === "Done") {
@@ -293,6 +296,82 @@
     }
 
     function updateStatus(se) {
+        var o=JSON.parse(se.name);
+        var bypass=false;
+    
+        if(se.value==="DELETE"){
+            bypass=true;
+            var ardel=[] ;
+                    if(confirm("Make sure you have made a back up.\n\nDo you want to delete job "+se.value+"?")){
+             GetJ(linkme,function(ob){// alert(ob.parts.length)
+                             for(var i=0;i<ob.parts.length;i++){
+                        if(o.job===ob.parts[i].job){
+                            var d=ob.parts[i];
+                          var delDate=getFe(new Date().toString());
+                          d=ob.parts[i];
+                          d.delF=getFe(new Date().toString())
+                        ardel.push(d);
+                      
+                        ob.parts.splice(i,1); 
+                         i--;
+                    }
+                }
+  
+                GetJ(linkj,function(oj){
+                    for(var i=0;i<oj.jobs.length;i++){
+                        if(oj.jobs[i].job===o.job) {
+                            oj.jobs.splice(i,1);
+                            i=oj.jobs.length;
+                        }
+                    }
+                    UpdateJ(linkj,oj,function(){
+                GetJ(linktr,function(obt){
+                    obt.jobs.push(ardel);
+                    UpdateJ(linktr,obt,function(){
+                      //  alert(ob.parts.length)
+                        UpdateJ(linkme,ob,function(){
+                          alert("Delete done...");
+                       //   alert(ob.parts.length)
+                          window.location.reload();
+                          
+                          })
+                          })
+                   
+             })})})});
+         }
+         se.value="Active"
+        }
+        //      else se.value="Active"
+ 
+         if(se.value==="Rename"){
+             bypass=true;
+        GetJ(linkx,function(ob){
+            var sob=JSON.stringify(ob)
+            var n=prompt("Type new Job Name",o.job);
+            if(n!=null && n!=""){
+                for(var i=0;i<ob.parts.length;i++){
+                    if(ob.parts[i].job===o.job) ob.parts[i].job=n;
+                }
+
+          }   
+             //   alert(JSON.stringify(ob))
+           UpdateJ(linkme,ob,function(){
+            GetJ(linkj,function(oj){
+
+                for(var i=0;i<oj.jobs.length;i++){
+                    if(oj.jobs[i].job===o.job) oj.jobs[i].job=n;
+     
+                }
+             //  alert(JSON.stringify(oj))
+    UpdateJ(linkj,oj,function(){alert("Updated..."); window.location.reload();})})
+            })})
+            se.value="Active"
+
+    }
+  
+    
+        if(!bypass){
+            
         var job = JSON.parse(se.name);
         var op = se.value;
         bupi.style.display = "none";
@@ -318,7 +397,7 @@
         }
         var bo = par.getElementsByTagName("button")[0];
         if (op === "Active") {
-            bo.style.background = "rgb(12, 197, 6)";
+            bo.style.background = "rgb(68, 250, 62)";
             par.style.opacity = 1;
         }
         if (op === "Done") {
@@ -333,15 +412,19 @@
             bo.style.background = "yellow";
             par.style.opacity = .25;
         }
+    
         if (!by) {
             GetJ(linkj, function(obj) {
                 var po = obj.jobs;
                 for (var i = 0; i < po.length; i++) {
-                    if (po[i].job===job.job) {
+                    if (po[i].job===job.job){//po[i].job.indexOf(job.job) > -1) {
                         obj.jobs[i].status = op;
                         var f = getFe(new Date().toString())
                         if (obj.jobs[i].moves != undefined || obj.jobs[i].moves != null) obj.jobs[i].moves = "(" + user + "_" + op + "_" + f.fecha + "_" + f.tiempo + ")_" + obj.jobs[i].moves;
                         else obj.jobs[i].moves = "(" + user + "_" + op + "_" + f.fecha + "_" + f.tiempo + ")_";
+                      
+                      
+                      
                         i = po.length;
 
                     }
@@ -353,6 +436,8 @@
             });
 
         } else se.value = job.status;
+        }
+
     }
 
     function UpdateDes() {
@@ -377,22 +462,24 @@
 
     function showUpI() {
         tdes.value="";
-        titulo.innerHTML = "Paste Inventory...";
+        titulo.innerHTML = "Paste or Type Message...";
         des.style.display = "block";
         bupi.style.display = "block";
         bup.style.display = "none";
     }
 
+  
     function updateInv() {
-
-        UpdateJ('https://jsonblob.com/api/916381421703282688', {
-            inv: tdes.value
-        }, function() {
-            alert("Inv. submited.");
+          GetJ("https://jsonblob.com/api/916381421703282688",function(obm){
+              var nd=getFe(new Date().toString());
+              var ms="\n\nSent By: "+user+"\nDate: "+nd.fecha+"_"+nd.tiempo+"\n\n"+tdes.value+"\n\n========================================"
+              obm.msgs.push(ms)
+              UpdateJ('https://jsonblob.com/api/916381421703282688', obm, function() {
+            alert("Message sent...");
             des.style.display = "none";
         })
 
-
+})
 
     }
 
