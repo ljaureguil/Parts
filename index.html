@@ -302,14 +302,15 @@ var linktr='https://jsonblob.com/api/917804065594032128'//trash
         if(se.value==="DELETE"){
             bypass=true;
             var ardel=[] ;
-                    if(confirm("Make sure you have made a back up.\n\nDo you want to delete job "+se.value+"?")){
+                    if(confirm('It is Ready to Delete  -'+o.job+'- . Are you ready to proceed?') && confirm("Make sure you have made a back up.\n\nDo you want to delete job "+o.job+"?")){
              GetJ(linkme,function(ob){// alert(ob.parts.length)
                              for(var i=0;i<ob.parts.length;i++){
                         if(o.job===ob.parts[i].job){
                             var d=ob.parts[i];
                           var delDate=getFe(new Date().toString());
                           d=ob.parts[i];
-                          d.delF=getFe(new Date().toString())
+                          d.delF=getFe(new Date().toString());
+                          d.delF.delBy=user;
                         ardel.push(d);
                       
                         ob.parts.splice(i,1); 
