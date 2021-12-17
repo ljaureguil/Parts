@@ -72,6 +72,7 @@
         height: 60%;
         background: red;
         display: none;
+        border-style: solid;
     }
     #tdes {
         color: black;
@@ -85,6 +86,8 @@
     }
     #upinv {
         position: absolute;
+        color:white;
+        font-weight: bolder;
         top: 1%;
         right: 1%;
         width: 35px;
@@ -99,6 +102,10 @@
     }
     .cbb {
         margin: 10px;
+    }
+    #bre
+    {
+        display: none;
     }
 </style>
 <div id="todo">
@@ -123,12 +130,14 @@
             <button onclick="des.style.display='none'" class="cbb">Close</button>
             <button id="bupi" onclick="updateInv()" class="cbb">Send Message</button>
             <button id="bup" onclick="UpdateDes()" class="cbb">Update</button>
+                      <button id="bre" onclick="openMsgs()" class="cbb">Open Msgs.</button>
+                      <button id="bclr" onclick="tdes.value=''" class="cbb">Clear</button>      
         </div>
         <br>
         <br>
         <p></p>
     </div>
-    <button id="upinv" onclick="showUpI()"></button>
+    <button id="upinv" onclick="showUpI()">M</button>
 </div>
 
 <script>
@@ -138,6 +147,24 @@
     var linkme = 'https://jsonblob.com/api/893891925422391296'; //my clipboard
        var linkx = 'https://jsonblob.com/api/915289952775061504'; //test
 var linktr='https://jsonblob.com/api/917804065594032128'//trash
+var linkmsgs="https://jsonblob.com/api/916381421703282688"
+
+   var vms=localStorage.getItem("mensages");
+   GetJ(linkmsgs,function(obm){
+     if(vms!=obm.msgs){
+        var ci=obm.msgs.length;
+           alert(obm.msgs.length-1)
+            showUpI()
+                   tdes.value=obm.msgs[(obm.msgs.length-1)*1];
+                   bre.style.display="block"
+                   localStorage.setItem("mensages",obm.msgs)
+       }
+   })
+   function openMsgs(){
+      var m=localStorage.getItem("mensages")//obm.msgs;
+      if(m!=null) tdes.value= m;
+   }
+
     var user = localStorage.getItem("us");
 
     if (user === null) {
@@ -386,7 +413,8 @@ var linktr='https://jsonblob.com/api/917804065594032128'//trash
 
             if (job.description === undefined) tdes.value = "";
             else tdes.value = job.description;
-            des.style.display = "block";
+            des.style.display = "block"; 
+            bre.style.display="none"
             titulo.innerHTML = "JOB NUMBER: " + job.job;
         }
         if (op === "Moves") {
@@ -467,17 +495,22 @@ var linktr='https://jsonblob.com/api/917804065594032128'//trash
         des.style.display = "block";
         bupi.style.display = "block";
         bup.style.display = "none";
+        bre.style.display="block"
     }
 
   
     function updateInv() {
-          GetJ("https://jsonblob.com/api/916381421703282688",function(obm){
+          GetJ(linkmsgs,function(obm){
               var nd=getFe(new Date().toString());
               var ms="\n\nSent By: "+user+"\nDate: "+nd.fecha+"_"+nd.tiempo+"\n\n"+tdes.value+"\n\n========================================"
-              obm.msgs.push(ms)
-              UpdateJ('https://jsonblob.com/api/916381421703282688', obm, function() {
+              obm.msgs.push(ms);
+              
+              UpdateJ(linkmsgs, obm, function() {
             alert("Message sent...");
-            des.style.display = "none";
+            tdes.value=obm.msgs;
+            tdes.style.display.block;
+            des.style.display = "block";
+            bre.style.display="block"
         })
 
 })
