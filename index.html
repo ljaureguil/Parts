@@ -313,7 +313,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         var f = new Date()
         var v = Date.parse(fr);
         f.setTime(v);
-        var fe = f.getMonth() + "-" + f.getDate() + "-" + f.getFullYear();
+        var fe = f.getMonth()+1 + "-" + f.getDate() + "-" + f.getFullYear();
         var t = f.getHours() + ":" + f.getMinutes();
         return {
             fecha: fe,
