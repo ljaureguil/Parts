@@ -178,6 +178,37 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
     } else {
 
         GetJ(linkj, function(obj) {
+      
+                GetJ(linkmo, function(obm) {
+                    var fe = getFe(new Date().toString());
+                    obm.partsM.push(user + "_" + fe.fecha + "_" + fe.tiempo);
+                    UpdateJ(linkmo, obm);
+                });
+                for(var i=0;i<obj.jobs.length;i++){
+                    var c = crjob(obj.jobs[i])
+                   jobs.appendChild(c);
+  
+
+                }
+
+   
+     
+    })
+    }
+    
+    /*
+    
+    
+    if (user === null) {
+        var u = prompt("Type your name").trim();
+        if (u === "") window.location.reload();
+        else {
+            localStorage.setItem("us", u);
+            window.location.reload();
+        }
+    } else {
+
+        GetJ(linkj, function(obj) {
             GetJ(linkme, function(ob) {
                 GetJ(linkmo, function(obm) {
                     var fe = getFe(new Date().toString());
@@ -225,6 +256,9 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         })
 
     }
+      */
+    
+  
 
     function crjob(oc) {
         var o = oc.job;
@@ -253,7 +287,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         b.name = o;
         b.setAttribute('class', "bj")
         b.innerHTML = o;
-        b.setAttribute("onclick", "sel(this.innerHTML)");
+        b.setAttribute("onclick", "sel(this)");
         d.appendChild(b);
         d.appendChild(s)
 
@@ -276,8 +310,8 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         if (op === "") {
 
         }
-
-        s.setAttribute("name", JSON.stringify(oc))
+        d.name=oc
+     //   s.setAttribute("name", JSON.stringify(oc))
         return d;
 
 
@@ -285,6 +319,32 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
     }
 
     function sel(se) {
+       
+        var arsel =se.parentElement.name.parts;
+    /*   for (var i = 0; i < pa.length; i++) {
+            if (pa[i].job === se) {
+                arsel.push(pa[i])
+            }
+        }
+        */
+        var e = String.fromCharCode(9);
+        var ot = "",
+            mi = "";
+        var c = "QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Move" + e + "Remaining" + e + "Note" + e + "From" + "\n";
+        for (var i = 0; i < arsel.length; i++) {
+            var p = arsel[i];
+            var f = getFe(p.created);
+            if (p.clase === "inv") c += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n"; //f.fecha
+            else {
+                if (p.clase === "other") ot += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n";
+                else mi += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n";
+
+            }
+        }
+        clip.value = c + "\n" + mi + "\n" + ot;
+
+    }
+    function sel2(se) {
         var arsel = [];
         for (var i = 0; i < pa.length; i++) {
             if (pa[i].job === se) {
@@ -324,130 +384,119 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
     }
 
     function updateStatus(se) {
-        var o=JSON.parse(se.name);
+        var o=se.parentElement.name;
         var bypass=false;
     
         if(se.value==="DELETE"){
             bypass=true;
             var ardel=[] ;
                     if(confirm('It is Ready to Delete  -'+o.job+'- . Are you ready to proceed?') && confirm("Make sure you have made a back up.\n\nDo you want to delete job "+o.job+"?")){
-             GetJ(linkme,function(ob){// alert(ob.parts.length)
-                             for(var i=0;i<ob.parts.length;i++){
-                        if(o.job===ob.parts[i].job){
-                            var d=ob.parts[i];
-                          var delDate=getFe(new Date().toString());
-                          d=ob.parts[i];
-                          d.delF=getFe(new Date().toString());
-                          d.delF.delBy=user;
-                        ardel.push(d);
-                      
-                        ob.parts.splice(i,1); 
-                         i--;
-                    }
-                }
-  
+      
                 GetJ(linkj,function(oj){
+                    var ee=false;
                     for(var i=0;i<oj.jobs.length;i++){
                         if(oj.jobs[i].job===o.job) {
+                             ee=true;
                             oj.jobs.splice(i,1);
                             i=oj.jobs.length;
+                           
                         }
                     }
+                    if(ee){
                     UpdateJ(linkj,oj,function(){
                 GetJ(linktr,function(obt){
                     obt.jobs.push(ardel);
                     UpdateJ(linktr,obt,function(){
-                      //  alert(ob.parts.length)
-                        UpdateJ(linkme,ob,function(){
-                          alert("Delete done...");
-                       //   alert(ob.parts.length)
-                          window.location.reload();
-                          
-                          })
-                          })
                    
-             })})})});
-         }
-         se.value="Active"
+                        UpdateJ(linkj,oj,function(){alert("Delated..."); window.location.reload();})
+                              })
+                   
+             })
+             }) 
+             
+              }
+             })
+            }
+         se.value="Active";
         }
         //      else se.value="Active"
  
          if(se.value==="Rename"){
              bypass=true;
-        GetJ(linkme,function(ob){
-            var sob=JSON.stringify(ob)
-            var n=prompt("Type new Job Name",o.job);
+             ee=true;
+        GetJ(linkj,function(ob){
+             var n=prompt("Type new Job Name",o.job);
             if(n!=null && n!=""){
-                for(var i=0;i<ob.parts.length;i++){
-                    if(ob.parts[i].job===o.job) ob.parts[i].job=n;
+                for(var i=0;i<ob.jobs.length;i++){
+                    if(ob.jobs[i].job===o.job){
+                         ob.jobs[i].job=n;
+                         ee=true;
+                          i=ob.jobs.length;
+                    }
                 }
+                if(ee){
+                    if(confirm("ready to renam it, are you sure?")){
+                          UpdateJ(linkj,ob,function(){alert("Renamed.."); window.location.reload();})
 
+                    }
+                }
+    
           }   
-             //   alert(JSON.stringify(ob))
-           UpdateJ(linkme,ob,function(){
-            GetJ(linkj,function(oj){
+            se.value="Active";
 
-                for(var i=0;i<oj.jobs.length;i++){
-                    if(oj.jobs[i].job===o.job) oj.jobs[i].job=n;
-     
-                }
-             //  alert(JSON.stringify(oj))
-    UpdateJ(linkj,oj,function(){alert("Updated..."); window.location.reload();})})
-            })})
-            se.value="Active"
-
-    }
+    })
+         }
   
     
         if(!bypass){
             
-        var job = JSON.parse(se.name);
+      //  var job = o;
         var op = se.value;
         bupi.style.display = "none";
         bup.style.display = "block";
         var bts = document.getElementsByClassName("bj");
-        var par = se.parentElement;
+        //var par = se.parentElement;
         var by = false;
         if (op === "Job Description") {
-            by = true;
-            des.name = se.name;
+            bypass = true;
+            des.name = o.description;
 
-            if (job.description === undefined) tdes.value = "";
-            else tdes.value = job.description;
+            if (o.description === undefined) tdes.value = "";
+            else tdes.value = o.description;
             des.style.display = "block"; 
             bre.style.display="none"
-            titulo.innerHTML = "JOB NUMBER: " + job.job;
+            titulo.innerHTML = "JOB NUMBER: " + o.job;
         }
         if (op === "Moves") {
-            by = true;
-            if (job.moves != undefined || job.moves != null) alert(job.moves);
+            bypass = true;
+            if (o.moves != undefined || o.moves != null) alert(o.moves);
             else {
                 alert("no moves yet");
             }
         }
-        var bo = par.getElementsByTagName("button")[0];
+        var bo = se.parentElement.getElementsByTagName("button")[0];
         if (op === "Active") {
             bo.style.background = "rgb(68, 250, 62)";
-            par.style.opacity = 1;
+            se.parentElement.style.opacity = 1;
         }
         if (op === "Done") {
-            par.style.opacity = 1;
+            se.parentElement.style.opacity = 1;
             bo.style.background = "orange";
         }
         if (op === "Closing") {
-            par.style.opacity = 1;
+            se.parentElement.style.opacity = 1;
             bo.style.background = "red";
         }
         if (op === "Deactivate") {
             bo.style.background = "yellow";
-            par.style.opacity = .25;
+            se.parentElement.style.opacity = .25;
         }
     
-        if (!by) {
+        if (!bypass) {
             GetJ(linkj, function(obj) {
                 var po = obj.jobs;
                 for (var i = 0; i < po.length; i++) {
-                    if (po[i].job===job.job){//po[i].job.indexOf(job.job) > -1) {
+                    if (po[i].job===o.job){//po[i].job.indexOf(job.job) > -1) {
                         obj.jobs[i].status = op;
                         var f = getFe(new Date().toString())
                         if (obj.jobs[i].moves != undefined || obj.jobs[i].moves != null) obj.jobs[i].moves = "(" + user + "_" + op + "_" + f.fecha + "_" + f.tiempo + ")_" + obj.jobs[i].moves;
@@ -459,13 +508,13 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
 
                     }
                 }
-                UpdateJ(linkj, obj, function() {
+          //      UpdateJ(linkj, obj, function() {
                     alert("Status Changed...");
-                    window.location.reload();
+        //            window.location.reload();
                 })
-            });
+        //    });
 
-        } else se.value = job.status;
+        } else se.value = o.status;
         }
 
     }
