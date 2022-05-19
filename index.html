@@ -329,16 +329,18 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         */
         var e = String.fromCharCode(9);
         var ot = "",
-            mi = "";
-            var head=e+'"Job Description:\n'+se.parentElement.name.description+'"'+"\n"
-        var c = head+"QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Move" + e + "Remaining" + e + "Note" + e + "From" + "\n";
+            mi = "",
+            tod=getFe(new Date());
+            
+            var head=e+'"Job Description:\nToday Date: '+tod.fecha+'\n'+se.parentElement.name.description+'"'+"\n\n"
+        var c = head+"QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Note" + e + "From" + "\n";
         for (var i = 0; i < arsel.length; i++) {
             var p = arsel[i];
             var f = getFe(p.created);
-            if (p.clase === "inv") c += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n"; //f.fecha
+            if (p.clase === "inv") c += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.note + e + p.clase + "\n"; //f.fecha
             else {
-                if (p.clase === "other") ot += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n";
-                else mi += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n";
+                if (p.clase === "other") ot += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.note + e + p.clase + "\n";
+                else mi += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.note + e + p.clase + "\n";
 
             }
         }
