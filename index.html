@@ -130,7 +130,7 @@
         <div id="bb">
             <button onclick="des.style.display='none'" class="cbb">Close</button>
             <button id="bupi" onclick="updateInv()" class="cbb">Send Message</button>
-            <button id="bup" onclick="UpdateDes()" class="cbb">Update</button>
+            <button id="bup" onclick="UpdateDes(des.name)" class="cbb">Update</button>
                       <button id="bre" onclick="openMsgs()" class="cbb">Open Msgs.</button>
                       <button id="bclr" onclick="tdes.value=''" class="cbb">Clear</button>      
         </div>
@@ -263,7 +263,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
     function crjob(oc) {
         var o = oc.job;
         var s = document.createElement("select");
-        //  s.name=oc;//JSON.stringify(oc);
+        //  s.name=oc;//JSON.stringify(oc);name
 
 
         s.setAttribute("oninput", "updateStatus(this)")
@@ -282,7 +282,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         var op = s.value;
         var d = document.createElement("div");
         d.setAttribute("class", "cjob");
-        d.name = o;
+        d.name = oc;//o
         var b = document.createElement('button');
         b.name = o;
         b.setAttribute('class', "bj")
@@ -319,7 +319,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
     }
 
     function sel(se) {
-       
+       alert(JSON.stringify(se.parentElement.name))
         var arsel =se.parentElement.name.parts;
     /*   for (var i = 0; i < pa.length; i++) {
             if (pa[i].job === se) {
@@ -330,7 +330,8 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         var e = String.fromCharCode(9);
         var ot = "",
             mi = "";
-        var c = "QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Move" + e + "Remaining" + e + "Note" + e + "From" + "\n";
+            var head=e+'"Job Description:\n'+se.parentElement.name.description+'"'+"\n"
+        var c = head+"QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Move" + e + "Remaining" + e + "Note" + e + "From" + "\n";
         for (var i = 0; i < arsel.length; i++) {
             var p = arsel[i];
             var f = getFe(p.created);
@@ -459,7 +460,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         var by = false;
         if (op === "Job Description") {
             bypass = true;
-            des.name = o.description;
+            des.name = o;// o.description;
 
             if (o.description === undefined) tdes.value = "";
             else tdes.value = o.description;
@@ -520,8 +521,10 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
     }
 
     function UpdateDes() {
-
-        var job = JSON.parse(des.name); ////////////////////////
+        if(confirm("Are you sure you want to Update Description to this job?")){
+     //   alert(des.name)
+    //    var job = JSON.parse(des.name); ////////////////////////;
+       var job=des.name;
         GetJ(linkj, function(obj) {
             var po = obj.jobs;
             for (var i = 0; i < po.length; i++) {
@@ -537,7 +540,8 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
                 window.location.reload();
             })
         });
-    }
+   } 
+}
 
     function showUpI() {
         tdes.value="";
