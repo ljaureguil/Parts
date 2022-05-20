@@ -50,6 +50,15 @@
         height: 45%;
         padding: 10px;
     }
+    #dpa {
+        border: solid;
+        margin-top: 10px;
+        width: 100%;
+        height: 45%;
+        padding: 10px;
+        overflow: auto;
+    }
+
     .cop {
         color: white;
         margin: 5px;
@@ -108,6 +117,12 @@
     {
         display: none;
     }
+    .cpa{
+        margin: 5px;
+        padding: 5px;;
+        border:solid;
+        background:rgb(168, 245, 206);
+    }
 </style>
 <div id="todo">
     <div id="jobs">
@@ -118,7 +133,9 @@
     </div>
     <br>
     <br>
-    <button id="copiar" onclick='clip.select();document.execCommand("copy");'>Copy</button>
+    <button id="copiar" onclick='alert("Job copied to your clipboard, just paste it in any spread sheet...");clip.select();document.execCommand("copy");'>Copy *For Spread Sheet</button>
+    <br>
+<div id="dpa"></div>
     <br>
     <textarea id="clip"></textarea>
 
@@ -330,12 +347,18 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         var e = String.fromCharCode(9);
         var ot = "",
             mi = "",
+            
             tod=getFe(new Date());
+            dpa.innerHTML="";
             
             var head=e+'"Job Description:\nToday Date: '+tod.fecha+'\n'+se.parentElement.name.description+'"'+"\n\n"
         var c = head+"QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Note" + e + "From" + "\n";
         for (var i = 0; i < arsel.length; i++) {
             var p = arsel[i];
+            dpa.innerHTML+=crpa(p);
+              //  alert(dpa.innerHTML)
+
+
             var f = getFe(p.created);
             if (p.clase === "inv") c += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.note + e + p.clase + "\n"; //f.fecha
             else {
@@ -357,9 +380,14 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
         var e = String.fromCharCode(9);
         var ot = "",
             mi = "";
+            dpa.innerHTML="";
         var c = "QTY" + e + "Job No." + e + "P/N" + e + "Description" + e + "Mechanic" + e + "Date" + e + "Time" + e + "Move" + e + "Remaining" + e + "Note" + e + "From" + "\n";
         for (var i = 0; i < arsel.length; i++) {
-            var p = arsel[i];
+
+       
+
+            var p = arsel[i]; 
+     
             var f = getFe(p.created);
             if (p.clase === "inv") c += p.qty + e + p.job + e + p.pn + e + p.des + e + p.mec + e + f.fecha + e + f.tiempo + e + p.move + e + p.qtyObs + e + p.note + e + p.clase + "\n"; //f.fecha
             else {
@@ -369,6 +397,11 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
             }
         }
         clip.value = c + "\n" + mi + "\n" + ot;
+
+    }
+    function crpa(pa){
+        var s="<br>"+"<p class='cpa'>Job: "+pa.job+" --- Qty: "+pa.qty+" --- "+pa.pn+" --- "+pa.des+"</p>";
+        return s
 
     }
 
