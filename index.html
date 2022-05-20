@@ -118,10 +118,13 @@
         display: none;
     }
     .cpa{
-        margin: 5px;
-        padding: 5px;;
+        margin: 10px;
+        box-shadow: -4px 4px 9px rgb(180, 180, 180);  
+        font-weight: bold;
+        border-radius: 5px;
+        padding: 10px;
         border:solid;
-        background:rgb(168, 245, 206);
+        background:rgb(188, 245, 226);
     }
 </style>
 <div id="todo">
@@ -400,7 +403,7 @@ var linkmsgs="https://jsonblob.com/api/916381421703282688"
 
     }
     function crpa(pa){
-        var s="<br>"+"<p class='cpa'>Job: "+pa.job+" --- Qty: "+pa.qty+" --- "+pa.pn+" --- "+pa.des+"</p>";
+        var s="<br>"+"<p class='cpa'>Job: "+pa.job+"<br>Qty: "+pa.qty+"<br>P/N: "+pa.pn+"<br>Desc: "+pa.des+"<br>From: "+pa.clase+"</p>";
         return s
 
     }
